@@ -1,0 +1,82 @@
+import {createRequire} from 'node:module';import {readFile,writeFile,mkdir} from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';import assert from 'node:assert/strict';
+import {createStaticServer} from '../scripts/serve.mjs';import {decodeOfficial} from '../src/official-data.mjs';import {createCompetitionGame,filterCompetition} from '../src/competition.mjs';
+import {homeTeams} from '../src/presentation.mjs';
+const root=fileURLToPath(new URL('../',import.meta.url)),out=path.join(root,'verification-presentation');await mkdir(out,{recursive:true});
+const d=decodeOfficial(JSON.parse(await readFile(path.join(root,'data/coin-official-v2.1.json'))));
+const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_MODULE??'playwright');
+const server=createStaticServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const url=`http://127.0.0.1:${server.address().port}/`;
+const browser=await chromium.launch({channel:'msedge',headless:true}),checks=[],errors=[],requests=[];
+const record=name=>{checks.push({name,passed:true});console.log('PASS',name);};
+try{
+ const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+ await context.addInitScript(()=>{const set=window.setTimeout.bind(window),clear=window.clearTimeout.bind(window);window.__timers=new Set();window.setTimeout=(fn,delay,...args)=>{let id;id=set(()=>{window.__timers.delete(id);fn(...args);},delay);if(delay>=35&&delay<=700)window.__timers.add(id);return id;};window.clearTimeout=id=>{window.__timers.delete(id);clear(id);};Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async s=>window.__copied=s}});});
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>requests.push(r.url()));
+ const click=a=>page.locator(`button[data-action="${a}"]:visible`).first().click();
+ const load=async()=>{await page.goto(url);await page.locator('#home').waitFor({state:'visible'});};
+ const pause=async()=>{if(await page.locator('#toggle').textContent()==='暂停')await click('toggle');};
+ const comma=s=>s.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+ const statusBounds=()=>{const r=document.getElementById('match-state').getBoundingClientRect();return {x:r.x,y:r.y,width:r.width};};
+ for(const [width,height] of [[360,740],[390,844],[430,932],[768,1024],[1440,900]]){
+  await page.setViewportSize({width,height});await load();assert.equal(await page.locator('#dataset-choice').inputValue(),'all');
+  assert.deepEqual(await page.locator('#dataset-choice option').allTextContents(),['全部比赛','联赛','杯赛']);
+  for(const [kind,count]of [['all',327],['league',268],['cup',59]]){
+   await page.locator('#dataset-choice').selectOption(kind);assert.match(await page.locator('#selection-meta').textContent(),new RegExp(`^${count} 场`));
+   assert.equal(await page.locator('[data-action="team"]').count(),homeTeams(filterCompetition(d,kind).teams).length);
+   const grid=await page.locator('#team-grid').evaluate(e=>({rows:getComputedStyle(e).gridAutoRows,height:e.clientHeight,padding:parseFloat(getComputedStyle(e).paddingTop)+parseFloat(getComputedStyle(e).paddingBottom),gap:parseFloat(getComputedStyle(e).rowGap)}));
+   assert.equal(grid.height,3*parseFloat(grid.rows)+2*grid.gap+grid.padding);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   assert.ok(await page.locator('#start').evaluate(e=>e.getBoundingClientRect().bottom)<=height);
+   await page.screenshot({path:path.join(out,`home-${kind}-${width}.png`)});
+   await click('start');await pause();assert.equal(await page.locator('#match-state').textContent(),'待揭晓');
+   const bounds=await page.evaluate(statusBounds);assert.equal(await page.locator('#match-card [data-testid="score"]').count(),0);
+   assert.equal(await page.locator('#phase-status').evaluate(e=>getComputedStyle(e).clipPath),'inset(50%)');
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   assert.ok(await page.locator('#live-chart').evaluate(e=>e.getBoundingClientRect().bottom)<=height,`${width} ${kind} curve must fit`);
+   await click('forward');assert.equal(await page.locator('#match-state').textContent(),'已揭晓');assert.deepEqual(await page.evaluate(statusBounds),bounds);
+   assert.equal(await page.locator('.score-row').first().evaluate(e=>getComputedStyle(e).borderLeftWidth),'0px');
+   await page.screenshot({path:path.join(out,`reveal-${kind}-${width}.png`)});
+   await click('finish');const expected=createCompetitionGame(d,'loyal','smoba:10027',{},kind).finish().stats;
+   assert.equal(await page.locator('#final-coins').textContent(),comma(expected.final));assert.match(await page.locator('#result-mode').textContent(),new RegExp({all:'全部比赛',league:'联赛',cup:'杯赛'}[kind]));
+   await click('copy');assert.match(await page.evaluate(()=>window.__copied),new RegExp({all:'全部比赛',league:'联赛',cup:'杯赛'}[kind]));
+   await click('home');assert.equal(await page.evaluate(()=>window.__timers.size),0);
+  }
+  record(`three filters, exact result, stable status and one-screen controls ${width}px`);
+ }
+ // 真实日期批记录100枚再结算，检查“待结算”标签与数值列均不随位数变化。
+ await page.setViewportSize({width:1440,height:900});await load();
+ const fireIcon=page.locator('[data-team="smoba:10101:fire-leopard-2022"] img');
+ assert.equal(await fireIcon.getAttribute('src'),'./assets/teams/fire-leopard-2022.png');
+ await fireIcon.scrollIntoViewIfNeeded();await fireIcon.evaluate(img=>img.decode());assert.ok(await fireIcon.evaluate(img=>img.naturalWidth>0));
+ assert.equal(await page.locator('[data-action="team"]').count(),27);
+ const homeRows=await page.locator('[data-action="team"]').evaluateAll(es=>new Set(es.map(e=>e.getBoundingClientRect().top)).size);assert.equal(homeRows,3);
+ await click('start');await pause();
+ const pendingBounds=()=>['#reserved > span:first-child','#reserved-value','#cash > span:first-child','#cash-value'].map(s=>{const r=document.querySelector(s).getBoundingClientRect();return{x:r.x,y:r.y,width:r.width};});
+ const pendingBefore=await page.evaluate(pendingBounds);assert.equal(await page.locator('#reserved-value').textContent(),'0.00');
+ await click('toggle');await page.locator('#match-card[data-phase="recorded"]').waitFor();await pause();
+ assert.equal(await page.locator('#reserved-value').textContent(),'100.00');assert.deepEqual(await page.evaluate(pendingBounds),pendingBefore);
+ await page.screenshot({path:path.join(out,'pending-100-desktop.png')});await click('forward');assert.equal(await page.locator('#reserved-value').textContent(),'0.00');assert.deepEqual(await page.evaluate(pendingBounds),pendingBefore);
+ await page.screenshot({path:path.join(out,'pending-0-desktop.png')});record('27 audited favorites in three desktop rows, historical Fire logo, fixed pending labels and amount columns');
+ await page.setViewportSize({width:390,height:844});await load();await click('start');await pause();
+ await click('forward');const firstId=await page.locator('#match-card').getAttribute('data-match-id');await click('forward');await click('forward');
+ const currentBalance=await page.locator('#balance').textContent(),currentScore=await page.locator('[data-testid="score"]').textContent(),before=await page.evaluate(statusBounds);
+ await click('back');assert.equal(await page.locator('#match-state').textContent(),'回看中');assert.equal(await page.locator('#balance').textContent(),currentBalance);assert.ok(await page.locator('.review-asset').isVisible());
+ await page.screenshot({path:path.join(out,'loyal-review-390.png')});await click('forward');assert.equal(await page.locator('[data-testid="score"]').textContent(),currentScore);assert.equal(await page.locator('#balance').textContent(),currentBalance);assert.deepEqual(await page.evaluate(statusBounds),before);
+ await click('restart');await pause();assert.equal(await page.locator('#review-back').isDisabled(),true);assert.equal(await page.locator('#balance').textContent(),'10,000.00');
+ record('loyal previous/next review leaves assets unchanged, status fixed, restart clears review');
+ await click('home');await page.locator('#dataset-choice').selectOption('cup');await page.locator('button[data-mode="trader"]').click();
+ assert.equal(await page.locator('#dataset-bar').isVisible(),false);assert.equal(await page.locator('#dataset-choice').inputValue(),'all');
+ assert.ok(!(await page.locator('#challenge-info').textContent()).includes('无已验收'));assert.equal(await page.locator('#start').isEnabled(),true);
+ await page.locator('#challenge-type').selectOption('season');assert.equal(await page.locator('#challenge-season option').count(),29);await page.locator('#challenge-season').selectOption('KIC2022');assert.match(await page.locator('#challenge-info').textContent(),/82 场/);
+ await page.screenshot({path:path.join(out,'trader-home-390.png')});
+ await page.locator('button[data-mode="loyal"]').click();assert.equal(await page.locator('#dataset-choice').inputValue(),'cup');assert.equal(await page.locator('#dataset-bar').isVisible(),true);
+ await page.locator('#dataset-choice').selectOption('league');await page.locator('button[data-mode="trader"]').click();assert.equal(await page.locator('#challenge-season option[value="KIC2022"]').count(),1);assert.equal(await page.locator('#challenge-season option').count(),29);
+ await page.locator('#challenge-type').selectOption('season_team');await page.locator('#challenge-season').selectOption('KPL2020S1');await page.locator('#challenge-team').selectOption('smoba:10027');await click('start');
+ assert.equal(await page.locator('#review-forward').isDisabled(),true);assert.equal(await page.locator('[data-testid="score"]').count(),0);
+ await page.locator('[data-choice="a"]').click();await click('confirm');await click('next');await page.locator('[data-choice="b"]').click();await click('confirm');
+ const balance=await page.locator('#balance').textContent(),score=await page.locator('[data-testid="score"]').textContent();await click('back');
+ assert.equal(await page.locator('#balance').textContent(),balance);assert.equal(await page.locator('[data-action="confirm"]').isVisible(),false);await page.screenshot({path:path.join(out,'trader-review-390.png')});await click('forward');assert.equal(await page.locator('[data-testid="score"]').textContent(),score);assert.equal(await page.locator('#balance').textContent(),balance);
+ await click('next');assert.equal(await page.locator('[data-testid="score"]').count(),0);assert.equal(await page.locator('#review-forward').isDisabled(),true);await click('back');await click('forward');assert.equal(await page.locator('[data-testid="score"]').count(),0);
+ await click('home');assert.equal(await page.evaluate(()=>window.__timers.size),0);record('trader filter fallbacks, past-only review and return to unanswered preview never resettle or leak');
+ assert.deepEqual(errors,[]);assert.ok(requests.every(r=>new URL(r).origin===new URL(url).origin));
+ await writeFile(path.join(out,'browser-results.json'),JSON.stringify({all_passed:true,browser:browser.version(),physicalDevice:false,checks,errors,filters:{all:2631,league:1989,cup:642}},null,2)+'\n');
+}finally{await browser.close();await new Promise(r=>server.close(r));}

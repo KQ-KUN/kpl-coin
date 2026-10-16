@@ -1,0 +1,259 @@
+{
+  "assets": {
+    "assets/teams/10001.png": {
+      "bytes": 13143,
+      "sha256": "6aae8160e14ffe24c20579f495ec6ff58dfef8896974c98f4f77fbe37cdfb4a5"
+    },
+    "assets/teams/10002.png": {
+      "bytes": 5981,
+      "sha256": "4c859543e78efdc61ab81eae0db6963b0e89793f541f391337ee57695ad8794d"
+    },
+    "assets/teams/10003.png": {
+      "bytes": 25648,
+      "sha256": "25c6f8aebbfa99ccc63386219fb5512afa53c0c9ee137b8a5b5cf04dd137af2e"
+    },
+    "assets/teams/10005.png": {
+      "bytes": 5916,
+      "sha256": "a57b5a2960367afcc0ee0ae591767a836dd871a83a2b87f9ed45ab31fce2a069"
+    },
+    "assets/teams/10006.png": {
+      "bytes": 12003,
+      "sha256": "91fff1592b4d12226cf8f67fc2bcc4a34848fbe1660e388266483b13cc4ce3f5"
+    },
+    "assets/teams/10007.png": {
+      "bytes": 8187,
+      "sha256": "ebb62ed4a3b156490762c4caf50b6920abfd29b295ffb2addc4f0b3778324801"
+    },
+    "assets/teams/10008.png": {
+      "bytes": 20623,
+      "sha256": "e7654d6bf19739657ab78fe1733a2d95dec73733e7af925c52f0be8594dcf303"
+    },
+    "assets/teams/10009.png": {
+      "bytes": 6148,
+      "sha256": "41af9ce1168392e61cf1808924ea07aec66e836d004b9e69bfa9f4ab5f03264f"
+    },
+    "assets/teams/10010.png": {
+      "bytes": 6353,
+      "sha256": "ff5e816ca5fcb397d0d7ea6ced050134b39be87b65cbc346d80405e2d79981a3"
+    },
+    "assets/teams/10016.png": {
+      "bytes": 9756,
+      "sha256": "63caa46125349e5b26b90071113358a05b4af5d4376912f15dfc989e3ebb933c"
+    },
+    "assets/teams/10017.png": {
+      "bytes": 21183,
+      "sha256": "2033a0a7467e4875e04a9d7a81d87ea65c63164931d79eb2c71882400ff81e7b"
+    },
+    "assets/teams/10018.png": {
+      "bytes": 7431,
+      "sha256": "0659c65478fd0db369b84b343ec95d98f5965111a4f9c3fec6b415c975c8588c"
+    },
+    "assets/teams/10020.png": {
+      "bytes": 5042,
+      "sha256": "8ee07d74aaf39d1e3a10c06a01e1c1159b005836970c9db5f345b964768182e0"
+    },
+    "assets/teams/10027.png": {
+      "bytes": 6613,
+      "sha256": "c3c73d497927f23ccbb570f2aa17b462828360604fb688c2aed7daad7798724f"
+    },
+    "assets/teams/10028.png": {
+      "bytes": 5899,
+      "sha256": "877d1f6c48098d0ab453845a1425cad5969df97e302cda5377980200ce6cbad8"
+    },
+    "assets/teams/10031.png": {
+      "bytes": 18596,
+      "sha256": "0434862fd7d3544ba6f4759bc2586de787832f11384453b50cdff718010c585b"
+    },
+    "assets/teams/10032.png": {
+      "bytes": 89217,
+      "sha256": "d6c2e81d98eba09b0cc399554871ed490238064d7b21e7e1aebd85a290b38c69"
+    },
+    "assets/teams/10036.png": {
+      "bytes": 22404,
+      "sha256": "55697e01ef8991a8248d15c6c4ee4f1617da7631f2fed3272ae3ef9cdaebf256"
+    },
+    "assets/teams/10101.png": {
+      "bytes": 23558,
+      "sha256": "180f0b6621254ad512f5e9c029fb53fc9506b67f247e2aab43862a6df143dfb9"
+    },
+    "assets/teams/10302.png": {
+      "bytes": 23487,
+      "sha256": "3b8daa3fc12f8a83a15b8379182cfba8e4f31e98b58b394b336f05642fe64c28"
+    },
+    "assets/teams/10601.png": {
+      "bytes": 15104,
+      "sha256": "7bb5d9140df958dd1d21f3b71d413d26b7bb2e90fde39ca4415e7022eaa422e1"
+    },
+    "assets/teams/10602.png": {
+      "bytes": 29234,
+      "sha256": "368eb0411724502be297619b3ef1c32ee5b24e2d15f078444f29522c6e07e490"
+    },
+    "assets/teams/10901.png": {
+      "bytes": 93794,
+      "sha256": "57d7a4c6e86c8fc5b602bf4eb47f711facf26ba2087c3e3da64033eb8cc0872a"
+    },
+    "assets/teams/10903.png": {
+      "bytes": 11520,
+      "sha256": "4f27a43e0a40814a14469c2c466980c2d6066fc1c0335da67bbba5e00d32be76"
+    },
+    "assets/teams/10910.png": {
+      "bytes": 15705,
+      "sha256": "04d6c9f3bc7aef73f98d2d080505c802fd198fe8c24e08bc825a87be5935ed42"
+    },
+    "assets/teams/12202.png": {
+      "bytes": 9991,
+      "sha256": "b54a17ff1a6e1e80e5a8155422ee27335c88ba2b56db2498c217c21aab1f3936"
+    },
+    "data/coin-ui-v1.json": {
+      "bytes": 274553,
+      "sha256": "f9333c03b5ea987ae68893779547044c3e7158fa483bda7405ef354002397505"
+    },
+    "runtime/ledger.mjs": {
+      "bytes": 4410,
+      "sha256": "4b5bb0a4ab23e3d0f5bd7b50ba532eea4e498815df25daf4f6a255394c5b2636"
+    }
+  },
+  "canonical_ledger_sha256": "4b5bb0a4ab23e3d0f5bd7b50ba532eea4e498815df25daf4f6a255394c5b2636",
+  "counts": {
+    "matches": 1989,
+    "quarantined": 3,
+    "seasons": 16,
+    "teams": 27
+  },
+  "icons": {
+    "assets/teams/10001.png": {
+      "bytes": 13143,
+      "sha256": "6aae8160e14ffe24c20579f495ec6ff58dfef8896974c98f4f77fbe37cdfb4a5",
+      "source": "app/assets/team_icons/10001.png"
+    },
+    "assets/teams/10002.png": {
+      "bytes": 5981,
+      "sha256": "4c859543e78efdc61ab81eae0db6963b0e89793f541f391337ee57695ad8794d",
+      "source": "app/assets/team_icons/10002.png"
+    },
+    "assets/teams/10003.png": {
+      "bytes": 25648,
+      "sha256": "25c6f8aebbfa99ccc63386219fb5512afa53c0c9ee137b8a5b5cf04dd137af2e",
+      "source": "app/assets/team_icons/10003.png"
+    },
+    "assets/teams/10005.png": {
+      "bytes": 5916,
+      "sha256": "a57b5a2960367afcc0ee0ae591767a836dd871a83a2b87f9ed45ab31fce2a069",
+      "source": "app/assets/team_icons/10005.png"
+    },
+    "assets/teams/10006.png": {
+      "bytes": 12003,
+      "sha256": "91fff1592b4d12226cf8f67fc2bcc4a34848fbe1660e388266483b13cc4ce3f5",
+      "source": "app/assets/team_icons/10006.png"
+    },
+    "assets/teams/10007.png": {
+      "bytes": 8187,
+      "sha256": "ebb62ed4a3b156490762c4caf50b6920abfd29b295ffb2addc4f0b3778324801",
+      "source": "app/assets/team_icons/10007.png"
+    },
+    "assets/teams/10008.png": {
+      "bytes": 20623,
+      "sha256": "e7654d6bf19739657ab78fe1733a2d95dec73733e7af925c52f0be8594dcf303",
+      "source": "app/assets/team_icons/10008.png"
+    },
+    "assets/teams/10009.png": {
+      "bytes": 6148,
+      "sha256": "41af9ce1168392e61cf1808924ea07aec66e836d004b9e69bfa9f4ab5f03264f",
+      "source": "app/assets/team_icons/10009.png"
+    },
+    "assets/teams/10010.png": {
+      "bytes": 6353,
+      "sha256": "ff5e816ca5fcb397d0d7ea6ced050134b39be87b65cbc346d80405e2d79981a3",
+      "source": "app/assets/team_icons/10010.png"
+    },
+    "assets/teams/10016.png": {
+      "bytes": 9756,
+      "sha256": "63caa46125349e5b26b90071113358a05b4af5d4376912f15dfc989e3ebb933c",
+      "source": "app/assets/team_icons/10016.png"
+    },
+    "assets/teams/10017.png": {
+      "bytes": 21183,
+      "sha256": "2033a0a7467e4875e04a9d7a81d87ea65c63164931d79eb2c71882400ff81e7b",
+      "source": "app/assets/team_icons/10017.png"
+    },
+    "assets/teams/10018.png": {
+      "bytes": 7431,
+      "sha256": "0659c65478fd0db369b84b343ec95d98f5965111a4f9c3fec6b415c975c8588c",
+      "source": "app/assets/team_icons/10018.png"
+    },
+    "assets/teams/10020.png": {
+      "bytes": 5042,
+      "sha256": "8ee07d74aaf39d1e3a10c06a01e1c1159b005836970c9db5f345b964768182e0",
+      "source": "app/assets/team_icons/10020.png"
+    },
+    "assets/teams/10027.png": {
+      "bytes": 6613,
+      "sha256": "c3c73d497927f23ccbb570f2aa17b462828360604fb688c2aed7daad7798724f",
+      "source": "app/assets/team_icons/10027.png"
+    },
+    "assets/teams/10028.png": {
+      "bytes": 5899,
+      "sha256": "877d1f6c48098d0ab453845a1425cad5969df97e302cda5377980200ce6cbad8",
+      "source": "app/assets/team_icons/10028.png"
+    },
+    "assets/teams/10031.png": {
+      "bytes": 18596,
+      "sha256": "0434862fd7d3544ba6f4759bc2586de787832f11384453b50cdff718010c585b",
+      "source": "app/assets/team_icons/10031.png"
+    },
+    "assets/teams/10032.png": {
+      "bytes": 89217,
+      "sha256": "d6c2e81d98eba09b0cc399554871ed490238064d7b21e7e1aebd85a290b38c69",
+      "source": "app/assets/team_icons/10032.png"
+    },
+    "assets/teams/10036.png": {
+      "bytes": 22404,
+      "sha256": "55697e01ef8991a8248d15c6c4ee4f1617da7631f2fed3272ae3ef9cdaebf256",
+      "source": "app/assets/team_icons/10036.png"
+    },
+    "assets/teams/10101.png": {
+      "bytes": 23558,
+      "sha256": "180f0b6621254ad512f5e9c029fb53fc9506b67f247e2aab43862a6df143dfb9",
+      "source": "app/assets/team_icons/10101.png"
+    },
+    "assets/teams/10302.png": {
+      "bytes": 23487,
+      "sha256": "3b8daa3fc12f8a83a15b8379182cfba8e4f31e98b58b394b336f05642fe64c28",
+      "source": "app/assets/team_icons/10302.png"
+    },
+    "assets/teams/10601.png": {
+      "bytes": 15104,
+      "sha256": "7bb5d9140df958dd1d21f3b71d413d26b7bb2e90fde39ca4415e7022eaa422e1",
+      "source": "app/assets/team_icons/10601.png"
+    },
+    "assets/teams/10602.png": {
+      "bytes": 29234,
+      "sha256": "368eb0411724502be297619b3ef1c32ee5b24e2d15f078444f29522c6e07e490",
+      "source": "app/assets/team_icons/10602.png"
+    },
+    "assets/teams/10901.png": {
+      "bytes": 93794,
+      "sha256": "57d7a4c6e86c8fc5b602bf4eb47f711facf26ba2087c3e3da64033eb8cc0872a",
+      "source": "app/assets/team_icons/10901.png"
+    },
+    "assets/teams/10903.png": {
+      "bytes": 11520,
+      "sha256": "4f27a43e0a40814a14469c2c466980c2d6066fc1c0335da67bbba5e00d32be76",
+      "source": "app/assets/team_icons/10903.png"
+    },
+    "assets/teams/10910.png": {
+      "bytes": 15705,
+      "sha256": "04d6c9f3bc7aef73f98d2d080505c802fd198fe8c24e08bc825a87be5935ed42",
+      "source": "app/assets/team_icons/10910.png"
+    },
+    "assets/teams/12202.png": {
+      "bytes": 9991,
+      "sha256": "b54a17ff1a6e1e80e5a8155422ee27335c88ba2b56db2498c217c21aab1f3936",
+      "source": "app/assets/team_icons/12202.png"
+    }
+  },
+  "model_version": "elo-day-v1.0.0",
+  "runtime_budget_bytes": 524288,
+  "runtime_bytes": 274553,
+  "schema_version": "coin-ui-1.0.0"
+}

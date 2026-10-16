@@ -1,0 +1,13 @@
+node_modules/
+dist/
+verification/
+verification-d/
+verification-e/
+verification-layout/
+verification-interaction/
+.coin-build-*/
+.coin-old-*/
+__pycache__/
+.env
+.env.*
+*.log

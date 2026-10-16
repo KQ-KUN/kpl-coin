@@ -1,0 +1,15 @@
+{
+  "budget_bytes": 524288,
+  "bytes": 416245,
+  "counts": {
+    "honors": 40,
+    "matches": 2631,
+    "seasons": 29,
+    "teams": 112
+  },
+  "ledger_sha256": "4b5bb0a4ab23e3d0f5bd7b50ba532eea4e498815df25daf4f6a255394c5b2636",
+  "model_version": "elo-day-official-v2.1.0",
+  "params_basis": "unchanged_V1_parameters",
+  "schema_version": "coin-official-2.1.0",
+  "sha256": "241626e589f792da0b965db8f7ed1cab49376f183a5fe34062402e71044ddd15"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "kpl-coin",
+  "version": "0.4.3",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/engine.test.mjs tests/experience.test.mjs tests/release.test.mjs tests/interactive.test.mjs tests/official.test.mjs tests/kic2022.test.mjs tests/competition.test.mjs tests/review.test.mjs tests/presentation.test.mjs",
+    "test:browser": "node tests/browser-d.mjs",
+    "test:preflight": "node tests/browser-e.mjs",
+    "test:layout": "node tests/browser-layout.mjs",
+    "test:official": "node tests/browser-official.mjs",
+    "test:competition": "node tests/browser-competition.mjs"
+  },
+  "engines": {"node": ">=24"}
+}

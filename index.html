@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F6F2E9">
+  <meta name="description" content="给你10,000枚虚拟硬币，按模型模拟赔率与真实系列赛果，重新走一遍KPL历史。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>KPL Coin · KPL 硬币模拟器</title>
+  <link rel="icon" href="./assets/coin.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至游戏内容</a>
+  <header class="masthead">
+    <button class="brand" data-action="home" aria-label="KPL Coin，返回首页"><span lang="en">KPL COIN</span></button>
+    <span class="brand-subtitle">KPL 硬币模拟器</span><button data-action="home" class="text-button">首页</button>
+  </header>
+  <main id="main" tabindex="-1">
+    <div id="load-status" role="status" class="load-status">正在读取本地历史快照…</div>
+    <section id="home" hidden aria-labelledby="hero-title">
+      <div class="hero">
+        <h1 id="hero-title"><span class="hero-full">给你 <span class="accent">10,000</span> 枚硬币，重新走一遍 KPL 历史。</span><span class="hero-compact"><span class="accent">10,000</span> 枚硬币，重走 KPL 历史。</span></h1>
+      </div>
+      <div class="mode-tabs" role="group" aria-label="选择玩法">
+        <button data-action="mode" data-mode="loyal" aria-pressed="true"><strong>死忠模式</strong></button>
+        <button data-action="mode" data-mode="trader" aria-pressed="false"><strong>历史操盘</strong></button>
+      </div>
+      <div id="dataset-bar" class="dataset-bar"><label for="dataset-choice">赛事类型</label><select id="dataset-choice"><option value="all">全部比赛</option><option value="league">联赛</option><option value="cup">杯赛</option></select></div>
+      <section id="team-picker" aria-labelledby="team-title">
+        <div class="section-heading"><h2 id="team-title">选择你的本命</h2></div>
+        <div id="team-grid" class="team-grid" tabindex="0" role="group" aria-label="本命战队列表，可在列表内滚动选择更多战队"></div>
+      </section>
+      <section id="trader-intro" class="trader-intro" hidden>
+        <h2>选一段历史，由你决定</h2>
+        <div class="challenge-form">
+          <label>挑战范围<select id="challenge-type"><option value="season_team">一个赛季 · 一支战队（推荐）</option><option value="season">一个赛季 · 全部比赛</option><option value="team">一支战队 · 当前资料队史</option><option value="all">全历史挑战（高级）</option></select></label>
+          <label id="season-filter">赛事 / 赛季<select id="challenge-season"></select></label>
+          <label id="team-filter">选择战队<select id="challenge-team"></select></label>
+        </div>
+        <p id="challenge-info" class="challenge-info" role="status"></p>
+      </section>
+      <div class="start-bar"><div><strong id="selection-name">成都AG超玩会</strong><small id="selection-meta"></small></div><button id="start" class="primary" data-action="start">开始模拟 →</button></div>
+      <details class="rules"><summary>玩法与数据说明</summary>
+        <p id="dataset-note"></p>
+        <p>初始 10,000，每场固定投入 100 的死忠模式支持本命获胜。余额不足后停止新增投入，待结算比赛继续结算。历史操盘可逐场选择和跳过。</p>
+        <p>模型模拟赔率，并非历史真实盘口。倍率含本金；展示保留四位，结算使用完整精度，金额舍入到 0.01 枚。硬币只是在本站使用的虚拟计分单位，与 B 站真实账户和官方硬币无关。</p>
+        <p>可回放日期为 2020-01-01 至 2026 夏季赛。V1 仅联赛与年度总决赛；扩展版增加已验收杯赛。荣誉档案可早于回放日期。3 场质量冲突继续隔离。实际开赛/完赛时刻未完全核实，按来源日期与保守结果日期批推进；同日排序不代表真实分钟先后。</p>
+        <p>离线文件包含历史答案，正常玩法按日期揭晓；不提供防作弊保证。没有充值、提现、兑换、购买或真实资产转移。刷新页面会从头开始。</p>
+        <p>历史操盘采用逐场揭晓：选边后确认，立即展示本场比分并按唯一账本结算。同日比赛依固定顺序回放，资产曲线按比赛展示日期记录；这个交互顺序不代表当时真实可用资讯与资金。死忠模式仍使用原日期批结算。</p>
+      </details>
+    </section>
+    <section id="play" hidden aria-labelledby="play-title">
+      <div class="section-heading"><h1 id="play-title" class="play-title">本命的历史</h1><div id="trader-footer" class="trader-footer" hidden><button data-action="finish" class="secondary" aria-label="结束回放，剩余不参与">结束回放</button><button data-action="restart" class="text-button" aria-label="重新开始">重开</button></div></div>
+      <div class="balance-row"><div><span class="kicker">当前硬币 · 总资产</span><strong id="balance" class="balance">10,000.00</strong></div><div class="cash-note"><span id="cash"><span>可用</span><span id="cash-value">10,000.00</span></span><span id="reserved"><span>待结算</span><span id="reserved-value">0.00</span></span></div></div>
+      <div class="history-heading"><span id="year" class="year">2020</span><div><strong id="season-name"></strong><span id="date-label"></span></div><span id="completed" class="completed"></span></div>
+      <progress id="progress" aria-label="已完成历史比赛" value="0" max="1"></progress>
+      <div id="loyal-controls" class="playback-controls"><button data-action="toggle" id="toggle" class="primary">暂停</button><fieldset><legend>播放速度</legend><div class="speed-options"><button data-action="speed" data-speed="1" aria-pressed="false">1×</button><button data-action="speed" data-speed="3" aria-pressed="true">3×</button><button data-action="speed" data-speed="10" aria-pressed="false">10×</button></div></fieldset><button data-action="speed" data-speed="recap" id="recap" title="约 15 秒回顾完整队史" aria-pressed="false">极速回顾</button><button data-action="finish" class="secondary">跳至结算</button><button data-action="restart" class="text-button">重新开始</button></div>
+      <div class="play-grid">
+        <div><div id="phase-status" class="phase-status" role="status" aria-live="polite"></div><div class="match-navigation" aria-label="比赛前后回看"><button id="review-back" data-action="back" disabled>← 后退</button><span id="review-note" role="status"></span><button id="review-forward" data-action="forward">前进 →</button></div><div class="match-shell"><span id="match-state" class="match-state" role="status" aria-live="polite">待揭晓</span><article id="match-card" class="match-card" tabindex="0" aria-label="当前历史比赛，内容较多时可在卡片内滚动"></article></div>
+          <div id="trader-controls" class="trader-controls" hidden>
+            <div id="side-choices" class="side-choices"></div>
+            <fieldset><legend>投入硬币</legend><div id="stake-options" class="stake-options"></div></fieldset>
+            <div class="confirm-row"><button id="confirm" data-action="confirm" class="primary" disabled>确认支持</button><button data-action="skip" class="secondary">本场跳过</button></div>
+          </div>
+          <div id="next-controls" class="next-controls" hidden><button data-action="next" class="primary">继续历史 →</button></div>
+        </div>
+        <section class="chart-section" aria-labelledby="curve-title"><div class="section-heading"><h2 id="curve-title">硬币轨迹</h2><span id="live-net"></span></div>
+          <svg id="live-chart" class="asset-chart" viewBox="0 0 600 210" preserveAspectRatio="none" role="img" aria-label="历史回放的资产变化曲线"><line x1="16" x2="584" y1="102" y2="102" class="chart-baseline"/><path class="chart-line" d="M16,102 L584,102"/><circle class="chart-dot" r="4" cx="16" cy="102"/></svg>
+          <div class="chart-caption"><span id="curve-first">2020</span><span id="curve-last">2026</span></div>
+          <p class="small-note">曲线按结算日期批更新。资产含待结算本金，不提前计入可能返还。</p>
+        </section>
+      </div>
+      <p id="visibility-note" class="small-note" hidden>页面离开前台，回放已自动暂停。点“继续”恢复。</p>
+      <p class="odds-disclaimer">纯虚拟计分 · 非官方粉丝自制<br>模型模拟赔率，并非历史真实盘口。</p>
+    </section>
+    <section id="result" hidden aria-labelledby="result-title">
+      <article id="share-card" class="share-card">
+      <div class="result-head"><p class="kicker">KPL COIN / 我的历史战绩</p><div id="result-logo" class="result-logo"></div><h1 id="result-title"></h1><p id="result-mode"></p><p id="result-range"></p></div>
+      <div class="final-balance"><span>最终硬币</span><strong id="final-coins"></strong><p id="final-net"></p></div>
+      <div id="result-stats" class="result-stats"></div>
+      <section class="chart-section"><div class="section-heading"><h2>你走过的历史</h2><span>初始 10,000</span></div><svg id="result-chart" class="asset-chart" viewBox="0 0 600 210" role="img" aria-label="完整资产变化曲线"><line x1="16" x2="584" y1="102" y2="102" class="chart-baseline"/><path class="chart-line"/><circle class="chart-dot" r="4"/></svg><div class="chart-caption"><span id="result-first"></span><span id="result-last"></span></div></section>
+      <div id="result-highlights" class="result-highlights"></div>
+      <p id="result-stop" class="small-note"></p>
+      <p class="odds-disclaimer">纯虚拟计分 · 真实历史赛果<br>模型模拟赔率，并非历史真实盘口。</p>
+      </article>
+      <div class="result-actions"><button data-action="restart" class="primary">再来一次</button><button data-action="home" class="secondary">更换本命</button><button data-action="copy" class="secondary">复制战绩</button></div>
+      <p id="copy-status" role="status"></p><details class="season-details"><summary>查看逐赛季结果</summary><div id="season-results"></div></details>
+      <details class="rules"><summary>新增指标的统计口径</summary><p>单场最大净收益为已参与并结算比赛的最高正净收益，最大亏损为最低负净收益，没有对应结果时为 0，未参与时为空。最辉煌 / 最惨淡赛季按已参与比赛的赛季净收益比较，平手取时间最早的一季。死忠回撤按日期批总资产计算，操盘回撤按每场揭晓后的总资产计算。近五场只使用结果可用日期严格早于本场比赛日期的记录。</p></details>
+      <details id="honors-result" class="season-details" hidden><summary id="honors-title">真实队史荣誉</summary><p class="small-note">真实历史奖杯，包含回放范围以外的荣誉；不计为玩家参与、收益或额外硬币奖励。</p><div id="honors-list"></div></details>
+      <details id="archive-result" class="season-details" hidden><summary id="archive-title">2022世冠 BO2 历史档案</summary><p class="small-note">完整小组赛48场。BO2允许平局，整段不进入二选一预测、Elo或硬币账本；以下只展示真实历史比分，不计为玩家参与或收益。</p><div id="archive-list"></div></details>
+    </section>
+    <p id="error" role="alert" hidden></p>
+    <button id="reload" data-action="reload" class="secondary" hidden>重新加载</button>
+  </main>
+  <footer><span>非官方粉丝自制历史娱乐游戏</span><a id="hub-link" href="/" hidden>← 游戏中心</a><span id="model-label">本地快照</span></footer>
+  <noscript>需要开启 JavaScript 才能运行历史模拟器。</noscript>
+  <script type="module" src="./src/app.mjs"></script>
+</body></html>
