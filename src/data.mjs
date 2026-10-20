@@ -62,5 +62,6 @@ export async function loadData() {
   if(release&&manifest.assets['data/coin-ui-v1.json'].sha256!==release.runtime_sha256)throw Error('数据版本不一致，请重新加载。');
   if(bytes.byteLength>manifest.runtime_budget_bytes)throw Error('数据超出运行时预算');
   await verifyBytes(bytes,manifest.assets['data/coin-ui-v1.json'].sha256);
-  return decode(JSON.parse(new TextDecoder().decode(bytes)));
+  return {...decode(JSON.parse(new TextDecoder().decode(bytes))),identity:{gameVersion:release?.version??'source',
+    dataHash:manifest.assets['data/coin-ui-v1.json'].sha256,ledgerHash:manifest.assets['runtime/ledger.mjs'].sha256}};
 }

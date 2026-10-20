@@ -43,5 +43,6 @@ export async function loadOfficial(){
   if(!response.ok||!mr.ok)throw Error('官方赛事扩展加载失败，请重新加载。');
   const bytes=await response.arrayBuffer(),m=await mr.json();
   if(!release.official||release.official.schema!=='coin-official-2.1.0'||m.schema_version!==release.official.schema||release.official.sha256!==m.sha256||release.official.model!==m.model_version||release.ledger_sha256!==m.ledger_sha256||bytes.byteLength!==m.bytes||bytes.byteLength!==release.official.bytes||m.budget_bytes!==524288||bytes.byteLength>m.budget_bytes)throw Error('扩展缓存版本不一致');
-  await verifyBytes(bytes,m.sha256);return decodeOfficial(JSON.parse(new TextDecoder().decode(bytes)));
+  await verifyBytes(bytes,m.sha256);return {...decodeOfficial(JSON.parse(new TextDecoder().decode(bytes))),
+    identity:{gameVersion:release.version,dataHash:m.sha256,ledgerHash:m.ledger_sha256}};
 }

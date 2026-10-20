@@ -281,3 +281,6 @@ body[data-review=true] .trader-controls,body[data-review=true] .next-controls{vi
   #play .chart-section{padding-top:2px}
 }
 @container(max-width:300px){.cash-note{width:auto;flex-basis:auto}.history-heading{grid-template-columns:1fr}.history-heading strong{white-space:normal}.match-navigation{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#review-note{grid-column:1/-1;grid-row:2;white-space:normal}.match-card .card-meta{grid-template-columns:1fr}.card-meta>span:first-child{white-space:normal}.card-meta>span:last-child{width:auto;text-align:left}}
+.resume-panel{border:1px solid var(--line,#D8D0C4);padding:16px;margin:16px 0;}
+.resume-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.save-status:empty{display:none;}

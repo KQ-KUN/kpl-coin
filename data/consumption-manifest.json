@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "425a57fb576bb791a7ed5c61026fc18df7ccfac2",
+  "inputs": [
+    {
+      "path": "data/coin-ui-v1.json",
+      "sha256": "f9333c03b5ea987ae68893779547044c3e7158fa483bda7405ef354002397505"
+    },
+    {
+      "path": "data/coin-official-v2.1.json",
+      "sha256": "241626e589f792da0b965db8f7ed1cab49376f183a5fe34062402e71044ddd15"
+    },
+    {
+      "path": "data/assets-manifest.json",
+      "sha256": "088f019841b34005a0e9547ee0dc4d1a67b14d1206b62b5d9bc72826fefb24a7"
+    },
+    {
+      "path": "data/official-manifest-v2.1.json",
+      "sha256": "5d135f023ccbb1597697e1676e59e1e784b94e019933e8c32e65a43cd4700ee9"
+    },
+    {
+      "path": "runtime/ledger.mjs",
+      "sha256": "4b5bb0a4ab23e3d0f5bd7b50ba532eea4e498815df25daf4f6a255394c5b2636"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "data/coin-ui-v1.json",
+      "sha256": "f9333c03b5ea987ae68893779547044c3e7158fa483bda7405ef354002397505",
+      "bytes": 274553
+    },
+    {
+      "path": "data/coin-official-v2.1.json",
+      "sha256": "241626e589f792da0b965db8f7ed1cab49376f183a5fe34062402e71044ddd15",
+      "bytes": 416245
+    },
+    {
+      "path": "data/assets-manifest.json",
+      "sha256": "088f019841b34005a0e9547ee0dc4d1a67b14d1206b62b5d9bc72826fefb24a7",
+      "bytes": 9441
+    },
+    {
+      "path": "data/official-manifest-v2.1.json",
+      "sha256": "5d135f023ccbb1597697e1676e59e1e784b94e019933e8c32e65a43cd4700ee9",
+      "bytes": 443
+    },
+    {
+      "path": "runtime/ledger.js",
+      "sha256": "4b5bb0a4ab23e3d0f5bd7b50ba532eea4e498815df25daf4f6a255394c5b2636",
+      "sourcePath": "runtime/ledger.mjs",
+      "bytes": 4410
+    },
+    {
+      "path": "assets/teams/10001.png",
+      "sha256": "6aae8160e14ffe24c20579f495ec6ff58dfef8896974c98f4f77fbe37cdfb4a5",
+      "bytes": 13143
+    },
+    {
+      "path": "assets/teams/10002.png",
+      "sha256": "4c859543e78efdc61ab81eae0db6963b0e89793f541f391337ee57695ad8794d",
+      "bytes": 5981
+    },
+    {
+      "path": "assets/teams/10003.png",
+      "sha256": "25c6f8aebbfa99ccc63386219fb5512afa53c0c9ee137b8a5b5cf04dd137af2e",
+      "bytes": 25648
+    },
+    {
+      "path": "assets/teams/10005.png",
+      "sha256": "a57b5a2960367afcc0ee0ae591767a836dd871a83a2b87f9ed45ab31fce2a069",
+      "bytes": 5916
+    },
+    {
+      "path": "assets/teams/10006.png",
+      "sha256": "91fff1592b4d12226cf8f67fc2bcc4a34848fbe1660e388266483b13cc4ce3f5",
+      "bytes": 12003
+    },
+    {
+      "path": "assets/teams/10007.png",
+      "sha256": "ebb62ed4a3b156490762c4caf50b6920abfd29b295ffb2addc4f0b3778324801",
+      "bytes": 8187
+    },
+    {
+      "path": "assets/teams/10008.png",
+      "sha256": "e7654d6bf19739657ab78fe1733a2d95dec73733e7af925c52f0be8594dcf303",
+      "bytes": 20623
+    },
+    {
+      "path": "assets/teams/10009.png",
+      "sha256": "41af9ce1168392e61cf1808924ea07aec66e836d004b9e69bfa9f4ab5f03264f",
+      "bytes": 6148
+    },
+    {
+      "path": "assets/teams/10010.png",
+      "sha256": "ff5e816ca5fcb397d0d7ea6ced050134b39be87b65cbc346d80405e2d79981a3",
+      "bytes": 6353
+    },
+    {
+      "path": "assets/teams/10016.png",
+      "sha256": "63caa46125349e5b26b90071113358a05b4af5d4376912f15dfc989e3ebb933c",
+      "bytes": 9756
+    },
+    {
+      "path": "assets/teams/10017.png",
+      "sha256": "2033a0a7467e4875e04a9d7a81d87ea65c63164931d79eb2c71882400ff81e7b",
+      "bytes": 21183
+    },
+    {
+      "path": "assets/teams/10018.png",
+      "sha256": "0659c65478fd0db369b84b343ec95d98f5965111a4f9c3fec6b415c975c8588c",
+      "bytes": 7431
+    },
+    {
+      "path": "assets/teams/10020.png",
+      "sha256": "8ee07d74aaf39d1e3a10c06a01e1c1159b005836970c9db5f345b964768182e0",
+      "bytes": 5042
+    },
+    {
+      "path": "assets/teams/10027.png",
+      "sha256": "c3c73d497927f23ccbb570f2aa17b462828360604fb688c2aed7daad7798724f",
+      "bytes": 6613
+    },
+    {
+      "path": "assets/teams/10028.png",
+      "sha256": "877d1f6c48098d0ab453845a1425cad5969df97e302cda5377980200ce6cbad8",
+      "bytes": 5899
+    },
+    {
+      "path": "assets/teams/10031.png",
+      "sha256": "0434862fd7d3544ba6f4759bc2586de787832f11384453b50cdff718010c585b",
+      "bytes": 18596
+    },
+    {
+      "path": "assets/teams/10032.png",
+      "sha256": "d6c2e81d98eba09b0cc399554871ed490238064d7b21e7e1aebd85a290b38c69",
+      "bytes": 89217
+    },
+    {
+      "path": "assets/teams/10036.png",
+      "sha256": "55697e01ef8991a8248d15c6c4ee4f1617da7631f2fed3272ae3ef9cdaebf256",
+      "bytes": 22404
+    },
+    {
+      "path": "assets/teams/fire-leopard-2022.png",
+      "sha256": "977f317a7021204be7a8b4fb91517cad5f6f86ac4663463639b8faa33d7a23f8",
+      "bytes": 8350
+    },
+    {
+      "path": "assets/teams/10101.png",
+      "sha256": "180f0b6621254ad512f5e9c029fb53fc9506b67f247e2aab43862a6df143dfb9",
+      "bytes": 23558
+    },
+    {
+      "path": "assets/teams/10302.png",
+      "sha256": "3b8daa3fc12f8a83a15b8379182cfba8e4f31e98b58b394b336f05642fe64c28",
+      "bytes": 23487
+    },
+    {
+      "path": "assets/teams/10601.png",
+      "sha256": "7bb5d9140df958dd1d21f3b71d413d26b7bb2e90fde39ca4415e7022eaa422e1",
+      "bytes": 15104
+    },
+    {
+      "path": "assets/teams/10602.png",
+      "sha256": "368eb0411724502be297619b3ef1c32ee5b24e2d15f078444f29522c6e07e490",
+      "bytes": 29234
+    },
+    {
+      "path": "assets/teams/10901.png",
+      "sha256": "57d7a4c6e86c8fc5b602bf4eb47f711facf26ba2087c3e3da64033eb8cc0872a",
+      "bytes": 93794
+    },
+    {
+      "path": "assets/teams/10903.png",
+      "sha256": "4f27a43e0a40814a14469c2c466980c2d6066fc1c0335da67bbba5e00d32be76",
+      "bytes": 11520
+    },
+    {
+      "path": "assets/teams/10910.png",
+      "sha256": "04d6c9f3bc7aef73f98d2d080505c802fd198fe8c24e08bc825a87be5935ed42",
+      "bytes": 15705
+    },
+    {
+      "path": "assets/teams/12202.png",
+      "sha256": "b54a17ff1a6e1e80e5a8155422ee27335c88ba2b56db2498c217c21aab1f3936",
+      "bytes": 9991
+    }
+  ],
+  "generatedAt": "2026-10-19T10:28:41.969Z",
+  "coverage": {
+    "officialMatches": 2631,
+    "v1CompatibilityMatches": 1989,
+    "teamEntities": 112,
+    "cutoff": "2026-09-12",
+    "provenance": "Frozen consumption repository inputs; no new raw data collected."
+  },
+  "exclusionRules": [
+    "Quarantined rows stay excluded.",
+    "BO2 archive is display only: excluded from odds, Elo, decisions and ledger.",
+    "Unused v2.0 audit files remain source-only; v1 acceptance links retain their required runtime files."
+  ],
+  "generator": {
+    "name": "scripts/data-manifest.mjs",
+    "version": "f4e91b956ee8f4edd7012fbc0fe78bafc6f75bb03eef8d06c71134ac12f27715"
+  },
+  "semantics": {
+    "null": "unknown or not applicable; never an assumed zero",
+    "emptyString": "invalid for required IDs",
+    "zero": "a measured zero only when the field contract permits it",
+    "probabilityUnit": "p_a/p_b are fractions 0..1",
+    "odds": "decimal multiplier, return includes principal",
+    "money": "only runtime/ledger.mjs converts and settles minor units"
+  },
+  "resources": {
+    "originalTeamIconReferences": 26,
+    "finalLocalTeamReferences": 27,
+    "uniqueLocalAssets": 27,
+    "externalRuntimeAssets": 0
+  },
+  "quality": {
+    "duplicatePlayerIds": "not applicable: team challenge",
+    "teamEntities": 112,
+    "matchIdsUnique": true,
+    "missingTeamIcons": 85,
+    "unverifiedFacts": [
+      "Actual match timestamps remain not fully verified.",
+      "Entity continuity for isolated cup opponents is not inferred.",
+      "Historical alias/brand labels are scoped to the frozen snapshot."
+    ]
+  }
+}

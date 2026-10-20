@@ -6,6 +6,7 @@ import {homeTeams,teamIcon} from './presentation.mjs';
 import {loadOfficial} from './official-data.mjs';
 import {selectRows} from './challenge.mjs';
 import {trackCoin} from './analytics.mjs';
+import {CHECKPOINT_KEY,readCheckpoint,recordSession,restoreCheckpoint} from './checkpoint.mjs';
 
 const $=id=>document.getElementById(id);
 const escape=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -20,6 +21,24 @@ let scope={type:'season_team',seasonId:null,teamId},motionAllowed=true,completeT
 let profile=new URLSearchParams(location.search).get('dataset')==='v1'?'v1':'official',datasetGeneration=0;
 const datasetCache=new Map();
 const review=new ReplayReview();
+let recorder=null,saveTimer=null,saveGeneration=0,resuming=false;
+function savedRaw(){try{return localStorage.getItem(CHECKPOINT_KEY);}catch{return null;}}
+function renderResume(){
+  const raw=savedRaw();$('resume-panel').hidden=!raw;
+  if(!raw)return;
+  try{const saved=readCheckpoint(raw);$('resume-note').textContent=`上次${saved.context.mode==='loyal'?'死忠回放':'历史操盘'} · ${saved.expected.completed} 场已揭晓，可继续或重新开始。`;$('resume-game').disabled=false;}
+  catch(error){$('resume-note').textContent=error.message;$('resume-game').disabled=true;}
+}
+function flushSave(){
+  clearTimeout(saveTimer);saveTimer=null;if(!recorder||recorder.session!==session)return;
+  try{localStorage.setItem(CHECKPOINT_KEY,recorder.snapshot({speed:playback?.speed??3,completeTracked,recapTracked}));$('save-status').textContent='进度已保存在此浏览器';}
+  catch{$('save-status').textContent='浏览器未能保存进度，本局仍可继续游玩。';}
+}
+function scheduleSave(){const generation=saveGeneration;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{if(generation===saveGeneration)flushSave();},250);}
+function detachSave(){clearTimeout(saveTimer);saveTimer=null;saveGeneration++;recorder=null;}
+function bindRecorder(priorActions=[]){
+  recorder=recordSession(session,{identity:sourceData.identity,profile,mode,teamId,scope:{...scope},competitionKind},scheduleSave,priorActions);
+}
 function stopMotion(){for(const el of [$('balance'),$('match-card')])for(const a of el.getAnimations({subtree:true}))a.cancel();}
 function feedback(v){
   stopMotion();
@@ -43,7 +62,8 @@ function renderHome(){
   document.body.dataset.mode=mode;
   $('dataset-bar').hidden=mode==='trader';
   $('dataset-choice').value=competitionKind;
-  $('model-label').textContent=`${data.metadata.model_version} · 本地快照`;
+  $('model-label').textContent='虚拟计分 · 非官方粉丝自制';
+  $('data-model-note').textContent=`当前模型 ${data.metadata.model_version}。历史资料、模型与验收范围见下方说明。`;
   $('dataset-note').textContent=profile==='official'?`${competitionLabels[competitionKind]}：当前范围 ${data.rows.length.toLocaleString('en-US')} 场。联赛含KPL联赛与年度总决赛；杯赛含已接入的世冠、冬冠、挑战者杯及选拔赛。三种范围共用同一扩展模型，只筛选比赛，不改赔率。2022/2023世冠整个BO2阶段不参与预测；2022的48场可查只读档案。队史荣誉为全部历史奖杯，2020年前仅展示荣誉。`:'原V1冻结数据仅供验收链接对账，不是当前扩展模型的联赛筛选结果。';
   for(const b of document.querySelectorAll('[data-action="mode"]'))b.setAttribute('aria-pressed',String(b.dataset.mode===mode));
   for(const b of document.querySelectorAll('[data-action="team"]'))b.setAttribute('aria-pressed',String(b.dataset.team===teamId));
@@ -58,10 +78,11 @@ function renderHome(){
   $('start').disabled=mode==='trader'&&!rows.length;
   $('start').textContent=mode==='loyal'?'开始模拟 →':'进入历史操盘 →';
   if(mode==='loyal'&&data.honors){const count=data.honors.filter(h=>h.champion_id===teamId).length;if(count)$('selection-meta').textContent+=` · 队史${count}冠`;}
+  renderResume();
 }
 async function activateDataset(next){
   const generation=++datasetGeneration;
-  stopMotion();playback?.dispose();session=null;data=null;$('start').disabled=true;$('dataset-choice').disabled=true;
+  flushSave();detachSave();stopMotion();playback?.dispose();session=null;data=null;$('start').disabled=true;$('dataset-choice').disabled=true;
   $('load-status').hidden=false;
   try{
     const loaded=datasetCache.get(next)??await(next==='v1'?loadData():loadOfficial());
@@ -76,7 +97,7 @@ async function activateDataset(next){
 function applyCompetition(kind){
   const selected=filterCompetition(sourceData,kind);
   if(!selected.rows.length)throw Error('当前资料没有该类比赛');
-  stopMotion();playback?.dispose();session=null;view=null;review.clear();
+  flushSave();detachSave();stopMotion();playback?.dispose();session=null;view=null;review.clear();
   data=selected;competitionKind=kind;
   if(!team(teamId))teamId=data.teams.some(t=>t.id==='smoba:10027')?'smoba:10027':data.teams[0].id;
   if(!data.teams.some(t=>t.id===scope.teamId))scope.teamId=teamId;
@@ -263,14 +284,36 @@ function renderResult(v){
   $('archive-list').innerHTML=archives.map(r=>`<div class="season-item"><strong>${escape(r.name_a)} ${r.score_a}:${r.score_b} ${escape(r.name_b)}</strong><p>${escape(r.date)} · ${escape(r.group)}组 · ${r.score_a===r.score_b?'平局':'BO2'} · 不参与预测</p></div>`).join('');
 }
 function render(v){review.remember(v);review.exit();view=v;if(v.phase==='finished')renderResult(v);else renderPlay(v);}
+function installPlayback(speed=3){
+  playback=new Playback(()=>{motionAllowed=true;const v=playback.speed==='recap'?session.recap():session.advance();playback.phase=v.phase;playback.highlight=Boolean(v.review?.highlight);render(v);return v;},controls);
+  playback.speed=speed;$('visibility-note').hidden=true;
+}
 function start(){
-  stopMotion();playback?.dispose();review.clear();session=createCompetitionGame(sourceData,mode,teamId,scope,competitionKind);chosenSide=null;controlsQuote=null;
+  const next=createCompetitionGame(sourceData,mode,teamId,scope,competitionKind);
+  detachSave();stopMotion();playback?.dispose();review.clear();session=next;chosenSide=null;controlsQuote=null;
   completeTracked=false;recapTracked=false;trackCoin('coin-start');
   // 新回放可能拥有相同终点但不同轨迹，清除图表缓存，复用已有节点。
   for(const id of ['live-chart','result-chart'])delete $(id).dataset.series;
-  playback=new Playback(()=>{motionAllowed=true;const v=playback.speed==='recap'?session.recap():session.advance();playback.phase=v.phase;playback.highlight=Boolean(v.review?.highlight);render(v);return v;},controls);
-  playback.speed=3;$('visibility-note').hidden=true;render(session.advance());window.scrollTo({top:0,behavior:'instant'});
+  bindRecorder();installPlayback();render(session.advance());flushSave();window.scrollTo({top:0,behavior:'instant'});
   if(mode==='loyal')playback.play();
+}
+async function resume(){
+  if(resuming)return;resuming=true;$('resume-game').disabled=true;
+  try{
+    const raw=savedRaw(),saved=readCheckpoint(raw);
+    if(profile!==saved.context.profile)await activateDataset(saved.context.profile);
+    if(!sourceData)throw Error('当前资料未能加载，请重试。');
+    const restored=restoreCheckpoint(raw,sourceData.identity,c=>createCompetitionGame(sourceData,c.mode,c.teamId,c.scope,c.competitionKind));
+    flushSave();detachSave();stopMotion();playback?.dispose();review.clear();
+    mode=restored.context.mode;teamId=restored.context.teamId;scope={...restored.context.scope};
+    applyCompetition(restored.context.competitionKind);session=restored.session;
+    if(mode==='loyal')loyalCompetitionKind=competitionKind;
+    completeTracked=restored.ui.completeTracked;recapTracked=restored.ui.recapTracked;chosenSide=null;controlsQuote=null;
+    bindRecorder(restored.actions);installPlayback(restored.ui.speed);render(session.view());flushSave();
+    $('save-status').textContent='已恢复进度；回放保持暂停，可按“继续”前进。';
+    if(session.phase!=='finished'){$('play-title').setAttribute('tabindex','-1');$('play-title').focus({preventScroll:true});}
+  }catch(error){$('resume-panel').hidden=false;$('resume-note').textContent=error.message;}
+  finally{resuming=false;$('resume-game').disabled=false;}
 }
 async function copy(){
   trackCoin('coin-copy');
@@ -285,7 +328,9 @@ document.addEventListener('click',async event=>{
   if(!data)return;
   motionAllowed=event.detail!==0;
   try{switch(button.dataset.action){
-    case 'home':stopMotion();playback?.dispose();session=null;review.clear();renderHome();window.scrollTo({top:0,behavior:'instant'});break;
+    case 'home':stopMotion();playback?.dispose();flushSave();detachSave();session=null;review.clear();renderHome();window.scrollTo({top:0,behavior:'instant'});break;
+    case 'resume':await resume();break;
+    case 'discard-save':detachSave();try{localStorage.removeItem(CHECKPOINT_KEY);}catch{}renderResume();$('start').focus();break;
     case 'mode':mode=button.dataset.mode;trackCoin('coin-select-mode');applyCompetition(mode==='trader'?'all':loyalCompetitionKind);break;
     case 'team':teamId=button.dataset.team;trackCoin('coin-select-team');renderHome();break;
     case 'start':case 'restart':start();break;
@@ -312,7 +357,7 @@ document.addEventListener('change',async event=>{
   scope={type:$('challenge-type').value,seasonId:$('challenge-season').value,teamId:$('challenge-team').value};renderHome();
   if(event.target.id==='challenge-team')trackCoin('coin-select-team');
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stopMotion();if(playback?.running){playback.pause();$('visibility-note').hidden=false;}}});
-window.addEventListener('pagehide',()=>{stopMotion();playback?.pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopMotion();if(playback?.running){playback.pause();$('visibility-note').hidden=false;}flushSave();}});
+window.addEventListener('pagehide',()=>{stopMotion();playback?.pause();flushSave();});
 $('hub-link').hidden=!/^\/coin\/(?:index\.html)?$/.test(location.pathname);
 await activateDataset(profile);

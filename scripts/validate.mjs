@@ -1,0 +1,17 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const root=fileURLToPath(new URL('..',import.meta.url));
+const hash=b=>createHash('sha256').update(b).digest('hex');
+const read=async name=>JSON.parse(await fs.readFile(path.join(root,name),'utf8'));
+const manifest=await read('data/consumption-manifest.json');
+if(manifest.schemaVersion!==1||!/^[a-f0-9]{40}$/.test(manifest.sourceCommit)||!manifest.generatedAt||!manifest.generator?.version)throw Error('消费manifest不完整');
+for(const row of manifest.inputs)if(hash(await fs.readFile(path.join(root,row.path)))!==row.sha256)throw Error('消费快照hash不匹配: '+row.path);
+for(const row of manifest.outputs)if(hash(await fs.readFile(path.join(root,'dist',row.path)))!==row.sha256)throw Error('最终运行资源hash不匹配: '+row.path);
+const build=await read('dist/build-manifest.json');
+for(const [name,row]of Object.entries(build.files))if(hash(await fs.readFile(path.join(root,'dist',name)))!==row.sha256)throw Error('构建hash不匹配: '+name);
+const list=await read('config/runtime-files.json');
+for(const old of list.sourceOnly)if(Object.hasOwn(build.files,old))throw Error('旧验收资料进入正式运行包: '+old);
+for(const required of Object.keys(list.retainedCompatibility))if(!Object.hasOwn(build.files,required))throw Error('历史链接缺少所需运行资料: '+required);
+console.log(JSON.stringify({ok:true,sourceCommit:manifest.sourceCommit,files:Object.keys(build.files).length,runtimeBytes:Object.values(build.files).reduce((n,r)=>n+r.bytes,0),excluded:list.sourceOnly},null,2));

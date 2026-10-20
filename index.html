@@ -17,10 +17,12 @@
   </header>
   <main id="main" tabindex="-1">
     <div id="load-status" role="status" class="load-status">正在读取本地历史快照…</div>
+    <p id="save-status" class="small-note save-status" role="status" aria-live="polite"></p>
     <section id="home" hidden aria-labelledby="hero-title">
       <div class="hero">
         <h1 id="hero-title"><span class="hero-full">给你 <span class="accent">10,000</span> 枚硬币，重新走一遍 KPL 历史。</span><span class="hero-compact"><span class="accent">10,000</span> 枚硬币，重走 KPL 历史。</span></h1>
       </div>
+      <section id="resume-panel" class="resume-panel" aria-label="本地续玩" hidden><p id="resume-note"></p><div class="resume-actions"><button id="resume-game" class="secondary" data-action="resume">继续上次挑战</button><button class="text-button" data-action="discard-save">清除存档并重新开始</button></div></section>
       <div class="mode-tabs" role="group" aria-label="选择玩法">
         <button data-action="mode" data-mode="loyal" aria-pressed="true"><strong>死忠模式</strong></button>
         <button data-action="mode" data-mode="trader" aria-pressed="false"><strong>历史操盘</strong></button>
@@ -41,11 +43,12 @@
       </section>
       <div class="start-bar"><div><strong id="selection-name">成都AG超玩会</strong><small id="selection-meta"></small></div><button id="start" class="primary" data-action="start">开始模拟 →</button></div>
       <details class="rules"><summary>玩法与数据说明</summary>
+        <p id="data-model-note"></p>
         <p id="dataset-note"></p>
         <p>初始 10,000，每场固定投入 100 的死忠模式支持本命获胜。余额不足后停止新增投入，待结算比赛继续结算。历史操盘可逐场选择和跳过。</p>
         <p>模型模拟赔率，并非历史真实盘口。倍率含本金；展示保留四位，结算使用完整精度，金额舍入到 0.01 枚。硬币只是在本站使用的虚拟计分单位，与 B 站真实账户和官方硬币无关。</p>
         <p>可回放日期为 2020-01-01 至 2026 夏季赛。V1 仅联赛与年度总决赛；扩展版增加已验收杯赛。荣誉档案可早于回放日期。3 场质量冲突继续隔离。实际开赛/完赛时刻未完全核实，按来源日期与保守结果日期批推进；同日排序不代表真实分钟先后。</p>
-        <p>离线文件包含历史答案，正常玩法按日期揭晓；不提供防作弊保证。没有充值、提现、兑换、购买或真实资产转移。刷新页面会从头开始。</p>
+        <p>离线文件包含历史答案，正常玩法按日期揭晓；不提供防作弊保证。没有充值、提现、兑换、购买或真实资产转移。进度仅保存在此浏览器，可返回首页或刷新后继续；更换游戏或数据版本时旧存档不能恢复。</p>
         <p>历史操盘采用逐场揭晓：选边后确认，立即展示本场比分并按唯一账本结算。同日比赛依固定顺序回放，资产曲线按比赛展示日期记录；这个交互顺序不代表当时真实可用资讯与资金。死忠模式仍使用原日期批结算。</p>
       </details>
     </section>

@@ -20,14 +20,15 @@ export async function build(){
   const officialManifest=JSON.parse(await readFile(path.join(root,'data/official-manifest-v2.1.json')));
   if(hash(officialBlob)!==officialManifest.sha256||officialBlob.length>officialManifest.budget_bytes||officialManifest.ledger_sha256!==manifest.assets['runtime/ledger.mjs'].sha256)throw Error('官方扩展资源变化');
   decodeOfficial(JSON.parse(officialBlob));
-  const files=['index.html','styles.css'];
-  for(const folder of ['src','runtime','data','assets']){
-    async function walk(dir){for(const item of await readdir(path.join(root,dir),{withFileTypes:true})){
-      const name=path.posix.join(dir,item.name);if(item.isSymbolicLink())throw Error('构建资源不得使用符号链接');if(item.isDirectory())await walk(name);else files.push(name);
-    }}await walk(folder);
+  const runtime=JSON.parse(await readFile(path.join(root,'config/runtime-files.json'),'utf8'));
+  if(runtime.schemaVersion!==1||!Array.isArray(runtime.files)||new Set(runtime.files).size!==runtime.files.length)throw Error('运行文件清单无效');
+  const files=[...runtime.files];
+  for(const name of files){
+    if(typeof name!=='string'||path.isAbsolute(name)||name.split('/').some(p=>!p||p==='..'||p==='.')||name.includes('\\'))throw Error('运行文件清单越界');
+    if((await lstat(path.join(root,name))).isSymbolicLink())throw Error('构建资源不得使用符号链接');
   }
   files.sort();const inputs={};const digest=createHash('sha256');
-  for(const name of [...files,'scripts/build.mjs','package.json','package-lock.json']){
+  for(const name of [...files,'config/runtime-files.json','scripts/build.mjs','package.json','package-lock.json']){
     const bytes=await readFile(path.join(root,name));inputs[name]={bytes:bytes.length,sha256:hash(bytes)};
     digest.update(name+'\0').update(bytes);
   }
