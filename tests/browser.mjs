@@ -3,6 +3,7 @@ import {createRequire} from 'node:module';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {homedir} from 'node:os';
 import assert from 'node:assert/strict';
 import {performance} from 'node:perf_hooks';
 import {build} from '../scripts/build.mjs';
@@ -15,7 +16,7 @@ const temp=path.join(output,'browser-temp');await mkdir(temp,{recursive:true});p
 const require=createRequire(import.meta.url);
 let playwright;
 try{playwright=require('playwright');}catch{
-  playwright=require(process.env.PLAYWRIGHT_MODULE??'C:/Users/22974/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+  playwright=require(process.env.PLAYWRIGHT_MODULE??path.join(homedir(),'.cache','codex-runtimes','codex-primary-runtime','dependencies','node','node_modules','playwright'));
 }
 const manifest=await build();
 const dataset=decode(JSON.parse(await readFile(path.join(root,'data/coin-ui-v1.json'))));
