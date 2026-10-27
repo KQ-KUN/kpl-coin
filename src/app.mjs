@@ -288,10 +288,11 @@ function installPlayback(speed=3){
   playback=new Playback(()=>{motionAllowed=true;const v=playback.speed==='recap'?session.recap():session.advance();playback.phase=v.phase;playback.highlight=Boolean(v.review?.highlight);render(v);return v;},controls);
   playback.speed=speed;$('visibility-note').hidden=true;
 }
-function start(){
+function start(restarting=false){
   const next=createCompetitionGame(sourceData,mode,teamId,scope,competitionKind);
   detachSave();stopMotion();playback?.dispose();review.clear();session=next;chosenSide=null;controlsQuote=null;
   completeTracked=false;recapTracked=false;trackCoin('coin-start');
+  if(restarting)trackCoin('coin-restart');
   // 新回放可能拥有相同终点但不同轨迹，清除图表缓存，复用已有节点。
   for(const id of ['live-chart','result-chart'])delete $(id).dataset.series;
   bindRecorder();installPlayback();render(session.advance());flushSave();window.scrollTo({top:0,behavior:'instant'});
@@ -310,6 +311,7 @@ async function resume(){
     if(mode==='loyal')loyalCompetitionKind=competitionKind;
     completeTracked=restored.ui.completeTracked;recapTracked=restored.ui.recapTracked;chosenSide=null;controlsQuote=null;
     bindRecorder(restored.actions);installPlayback(restored.ui.speed);render(session.view());flushSave();
+    trackCoin('coin-resume');
     $('save-status').textContent='已恢复进度；回放保持暂停，可按“继续”前进。';
     if(session.phase!=='finished'){$('play-title').setAttribute('tabindex','-1');$('play-title').focus({preventScroll:true});}
   }catch(error){$('resume-panel').hidden=false;$('resume-note').textContent=error.message;}
@@ -333,7 +335,8 @@ document.addEventListener('click',async event=>{
     case 'discard-save':detachSave();try{localStorage.removeItem(CHECKPOINT_KEY);}catch{}renderResume();$('start').focus();break;
     case 'mode':mode=button.dataset.mode;trackCoin('coin-select-mode');applyCompetition(mode==='trader'?'all':loyalCompetitionKind);break;
     case 'team':teamId=button.dataset.team;trackCoin('coin-select-team');renderHome();break;
-    case 'start':case 'restart':start();break;
+    case 'start':start();break;
+    case 'restart':start(true);break;
     case 'toggle':stopMotion();exitReview();if(playback.running)playback.pause();else{$('visibility-note').hidden=true;playback.play();}break;
     case 'speed':stopMotion();exitReview();playback.setSpeed(button.dataset.speed==='recap'?'recap':Number(button.dataset.speed));if(playback.speed==='recap'&&!recapTracked){recapTracked=true;trackCoin('coin-recap');}break;
     case 'finish':stopMotion();playback.pause();render(session.finish());break;

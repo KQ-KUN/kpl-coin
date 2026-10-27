@@ -75,11 +75,11 @@ test('all production assets are local, no generated secrets, eval, or inline scr
     assert.ok(!/(?:gh[pousr]_[A-Za-z0-9]{30,}|AKIA[A-Z0-9]{16}|-----BEGIN (?:RSA |EC )?PRIVATE KEY-----)/.test(s),name);
   }
 });
-test('analytics default disabled; only approved fixed events, no bot traffic, exceptions never interrupt game',()=>{
+test('analytics enabled; only approved fixed events, no bot traffic, exceptions never interrupt game',()=>{
   const calls=[];const helper={trackEvent(name){calls.push(name);return true;}};
-  assert.equal(ANALYTICS_ENABLED,false);
-  for(const event of COIN_EVENTS)assert.equal(trackCoin(event,{helper}),false);assert.equal(calls.length,0);
-  for(const event of COIN_EVENTS)assert.equal(trackCoin(event,{approved:true,helper,webdriver:false}),true);
+  assert.equal(ANALYTICS_ENABLED,true);
+  for(const event of COIN_EVENTS)assert.equal(trackCoin(event,{approved:false,helper}),false);assert.equal(calls.length,0);
+  for(const event of COIN_EVENTS)assert.equal(trackCoin(event,{helper,webdriver:false}),true);
   assert.deepEqual(calls,[...COIN_EVENTS]);
   assert.equal(trackCoin('coin-start',{approved:true,helper,webdriver:true}),false);
   assert.equal(trackCoin('coin-start?amount=10000',{approved:true,helper}),false);
